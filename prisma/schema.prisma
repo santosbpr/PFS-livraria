@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Autor {
+  id            Int     @id @default(autoincrement())
+  nome          String
+  nacionalidade String
+  livros        Livro[] // Relação: Um Autor tem muitos Livros
+}
+
+model Livro {
+  id            Int     @id @default(autoincrement())
+  titulo        String
+  anoPublicacao Int
+  autorId       Int
+  autor         Autor   @relation(fields: [autorId], references: [id])
+  
+  capa          Capa?
+}
+
+model Capa {
+  id           Int     @id @default(autoincrement())
+  urlDaImagem  String  // Caminho para a imagem no servidor
+  
+  // Relação 1-para-1 com Livro
+  livroId      Int     @unique // @unique garante que um livro só pode ter uma capa
+  livro        Livro   @relation(fields: [livroId], references: [id])
+}
